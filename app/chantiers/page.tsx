@@ -28,7 +28,7 @@ export default function ChantiersPage() {
         if (error) {
             console.error('Error fetching chantiers:', error);
         } else {
-            setChantiers(data || []);
+            setChantiers((data as any) || []);
         }
         setLoading(false);
     };

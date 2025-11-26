@@ -90,7 +90,7 @@ export default function Home() {
               <Users size={24} />
             </div>
             <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-blue-600">
-              3eurekia CRM
+              EUREKIA
             </h1>
           </div>
           <button

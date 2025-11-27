@@ -19,6 +19,7 @@ export default function ChantierModal({ isOpen, onClose, onSave, initialData, se
         codePostal: '',
         ville: '',
         date_debut: new Date().toISOString().split('T')[0],
+        temps_vendu: undefined as number | undefined,
     });
     const [loading, setLoading] = useState(false);
 
@@ -30,6 +31,7 @@ export default function ChantierModal({ isOpen, onClose, onSave, initialData, se
                 codePostal: initialData.codePostal,
                 ville: initialData.ville,
                 date_debut: initialData.date_debut,
+                temps_vendu: initialData.temps_vendu,
             });
         } else if (selectedClient) {
             // Pre-fill with selected client's address
@@ -39,6 +41,7 @@ export default function ChantierModal({ isOpen, onClose, onSave, initialData, se
                 codePostal: selectedClient.codePostal,
                 ville: selectedClient.ville,
                 date_debut: new Date().toISOString().split('T')[0],
+                temps_vendu: undefined,
             });
         }
     }, [initialData, selectedClient, isOpen]);
@@ -108,6 +111,18 @@ export default function ChantierModal({ isOpen, onClose, onSave, initialData, se
                                     className="w-full px-3 py-2 border border-slate-400 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-all"
                                     value={formData.date_debut}
                                     onChange={(e) => setFormData({ ...formData, date_debut: e.target.value })}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-800 mb-1">Temps Vendu (heures)</label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    className="w-full px-3 py-2 border border-slate-400 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-all"
+                                    value={formData.temps_vendu || ''}
+                                    onChange={(e) => setFormData({ ...formData, temps_vendu: e.target.value ? parseInt(e.target.value) : undefined })}
+                                    placeholder="Ex: 40"
                                 />
                             </div>
 

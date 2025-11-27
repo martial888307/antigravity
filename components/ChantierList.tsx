@@ -1,7 +1,7 @@
 'use client';
 
 import { Chantier } from '@/types';
-import { Trash2, MapPin, Calendar, User } from 'lucide-react';
+import { Trash2, MapPin, Calendar, User, Clock } from 'lucide-react';
 
 interface ChantierListProps {
     chantiers: Chantier[];
@@ -45,9 +45,17 @@ export default function ChantierList({ chantiers, onEdit, onDelete }: ChantierLi
                                 <MapPin size={16} className="text-slate-400 shrink-0" />
                                 <span className="line-clamp-1">{chantier.adresse}, {chantier.ville}</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <Calendar size={16} className="text-slate-400 shrink-0" />
-                                <span>{new Date(chantier.date_debut).toLocaleDateString('fr-FR')}</span>
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-2">
+                                    <Calendar size={16} className="text-slate-400 shrink-0" />
+                                    <span>{new Date(chantier.date_debut).toLocaleDateString('fr-FR')}</span>
+                                </div>
+                                {chantier.temps_vendu && (
+                                    <div className="flex items-center gap-2 text-blue-700 font-medium">
+                                        <Clock size={16} className="shrink-0" />
+                                        <span>{chantier.temps_vendu}h</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -64,6 +72,7 @@ export default function ChantierList({ chantiers, onEdit, onDelete }: ChantierLi
                                 <th className="px-6 py-4">Client</th>
                                 <th className="px-6 py-4">Lieu</th>
                                 <th className="px-6 py-4">Date début</th>
+                                <th className="px-6 py-4">Temps Vendu</th>
                                 <th className="px-6 py-4 text-right">Actions</th>
                             </tr>
                         </thead>
@@ -96,6 +105,16 @@ export default function ChantierList({ chantiers, onEdit, onDelete }: ChantierLi
                                             <Calendar size={14} className="text-slate-500" />
                                             {new Date(chantier.date_debut).toLocaleDateString('fr-FR')}
                                         </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-slate-700">
+                                        {chantier.temps_vendu ? (
+                                            <div className="flex items-center gap-2 font-medium text-blue-700">
+                                                <Clock size={14} />
+                                                {chantier.temps_vendu} h
+                                            </div>
+                                        ) : (
+                                            <span className="text-slate-400">-</span>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <button

@@ -4,6 +4,7 @@ import { useDroppable, useDraggable } from '@dnd-kit/core';
 import { Intervention, Collaborateur } from '@/types';
 
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Maximize2, Minimize2 } from 'lucide-react';
+import VoiceRecorder from '../VoiceRecorder';
 
 interface CalendarGridProps {
     currentDate: Date;
@@ -14,6 +15,8 @@ interface CalendarGridProps {
     onTodayClick: () => void;
     isExpanded: boolean;
     onToggleExpand: () => void;
+    onRefresh?: () => void;
+    chantiers?: any[]; // Using any[] for now to match PlanningContainer state
 }
 
 export default function CalendarGrid({
@@ -24,7 +27,9 @@ export default function CalendarGrid({
     onDateChange,
     onTodayClick,
     isExpanded,
-    onToggleExpand
+    onToggleExpand,
+    onRefresh,
+    chantiers = []
 }: CalendarGridProps) {
     // Generate days for the grid (dynamic weeks)
     const getCalendarDays = (date: Date) => {
@@ -138,13 +143,20 @@ export default function CalendarGrid({
                     </div>
                 </div>
 
-                <button
-                    onClick={onToggleExpand}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
-                    title={isExpanded ? "Réduire" : "Agrandir"}
-                >
-                    {isExpanded ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
-                </button>
+                <div className="flex items-center gap-2">
+                    <VoiceRecorder
+                        onSuccess={onRefresh}
+                        chantiers={chantiers}
+                        collaborateurs={collaborateurs}
+                    />
+                    <button
+                        onClick={onToggleExpand}
+                        className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                        title={isExpanded ? "Réduire" : "Agrandir"}
+                    >
+                        {isExpanded ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+                    </button>
+                </div>
             </div>
 
             {/* Grid Header (Days of week) */}

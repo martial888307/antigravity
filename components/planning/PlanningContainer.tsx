@@ -18,6 +18,13 @@ function generateUUID() {
     });
 }
 
+// Helper to format local date as UTC string (e.g. 09:00 local -> 09:00Z)
+// This harmonizes with n8n workflow which sends 09:00Z for 9am Paris time
+function toFakeUTCISOString(date: Date): string {
+    const pad = (num: number) => num.toString().padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}Z`;
+}
+
 export default function PlanningContainer() {
     const [chantiers, setChantiers] = useState<Chantier[]>([]);
     const [collaborateurs, setCollaborateurs] = useState<Collaborateur[]>([]);
@@ -88,10 +95,11 @@ export default function PlanningContainer() {
         const startHour = period === 'AM' ? 9 : 14;
         const endHour = period === 'AM' ? 12 : 17;
 
+        // Create dates in local time
         const dateDebut = new Date(date);
         dateDebut.setHours(startHour, 0, 0, 0);
 
-        const dateFin = new Date(date);
+        const dateFin = new Date(dateDebut);
         dateFin.setHours(endHour, 0, 0, 0);
 
         const type = active.data.current?.type;
@@ -118,8 +126,8 @@ export default function PlanningContainer() {
                 id: tempId,
                 chantier_id: selectedChantier.id,
                 collaborateur_id: collaborateur.id,
-                date_debut: dateDebut.toISOString(),
-                date_fin: dateFin.toISOString(),
+                date_debut: toFakeUTCISOString(dateDebut),
+                date_fin: toFakeUTCISOString(dateFin),
                 chantier: selectedChantier,
                 collaborateur: collaborateur,
             };
@@ -131,8 +139,8 @@ export default function PlanningContainer() {
                 id: tempId,
                 chantier_id: selectedChantier.id,
                 collaborateur_id: collaborateur.id,
-                date_debut: dateDebut.toISOString(),
-                date_fin: dateFin.toISOString(),
+                date_debut: toFakeUTCISOString(dateDebut),
+                date_fin: toFakeUTCISOString(dateFin),
             }]).select().single();
 
             if (error) {
@@ -148,25 +156,31 @@ export default function PlanningContainer() {
 
             // Don't do anything if dropped on the same slot
             const currentStart = new Date(intervention.date_debut);
-            if (currentStart.getTime() === dateDebut.getTime()) return;
+            // Compare timestamps roughly (ignoring seconds/ms)
+            if (currentStart.getFullYear() === dateDebut.getFullYear() &&
+                currentStart.getMonth() === dateDebut.getMonth() &&
+                currentStart.getDate() === dateDebut.getDate() &&
+                currentStart.getHours() === dateDebut.getHours()) {
+                return;
+            }
 
             // Optimistic Update
             const updatedIntervention = {
                 ...intervention,
-                date_debut: dateDebut.toISOString(),
-                date_fin: dateFin.toISOString(),
+                date_debut: toFakeUTCISOString(dateDebut),
+                date_fin: toFakeUTCISOString(dateFin),
             };
 
             setInterventions(prev => prev.map(i => i.id === intervention.id ? updatedIntervention : i));
 
             // Persist to DB
             const { data, error } = await supabase.from('test-intervention').update({
-                date_debut: dateDebut.toISOString(),
-                date_fin: dateFin.toISOString(),
+                date_debut: toFakeUTCISOString(dateDebut),
+                date_fin: toFakeUTCISOString(dateFin),
             }).eq('id', intervention.id).select('*'); // Added .select('*') to get data back
 
             if (error) {
-                console.error('Error fetching interventions:', error);
+                console.error('Error updating intervention:', error);
                 // Revert
                 setInterventions(prev => prev.map(i => i.id === intervention.id ? intervention : i));
                 alert(`Erreur lors du déplacement: ${error.message}`);
@@ -175,11 +189,6 @@ export default function PlanningContainer() {
                 // Or, if data contains the updated list, use it directly.
                 // Assuming data here is the updated list of interventions from the select('*')
                 // This might be a full refetch or just the updated record depending on the select() usage.
-                // Given the instruction, we'll assume it's meant to be the full list or a way to trigger a full refresh.
-                // For simplicity and to match the instruction, we'll call fetchData() to ensure consistency.
-                // If the intent was to use `data` from the update, it would typically be `data.single()`
-                // and then update the specific intervention in state.
-                // However, the instruction specifically uses `(data as any) || []` which implies a list.
                 // The most robust way to ensure the state is correct after an update is to refetch all.
                 await fetchData();
             }
@@ -269,6 +278,8 @@ export default function PlanningContainer() {
                     onTodayClick={() => setCurrentDate(new Date())}
                     isExpanded={isExpanded}
                     onToggleExpand={() => setIsExpanded(!isExpanded)}
+                    onRefresh={fetchData}
+                    chantiers={chantiers}
                 />
 
                 <DragOverlay>

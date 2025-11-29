@@ -128,6 +128,7 @@ export default function PlanningSidebar({
                     ))}
                 </div>
             </div>
+            {children}
         </div>
     );
 }

@@ -232,86 +232,112 @@ export default function PlanningContainer() {
         return true;
     });
 
+    const [forceMobile, setForceMobile] = useState(false);
+
     return (
-        <div className={`flex ${isExpanded ? 'h-auto min-h-[85vh]' : 'h-[85vh]'} overflow-hidden transition-all duration-300`}>
-            <DndContext
-                sensors={sensors}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-            >
-                <PlanningSidebar
-                    chantiers={chantiers}
-                    collaborateurs={collaborateurs}
-                    selectedChantier={selectedChantier}
-                    onSelectChantier={setSelectedChantier}
-                    interventions={interventions}
-                    filteredCollaboratorIds={filteredCollaboratorIds}
-                    onToggleFilter={toggleCollaboratorFilter}
+        <div className="flex h-screen bg-slate-50 overflow-hidden">
+            {/* Desktop View */}
+            <div className={`${forceMobile ? 'hidden' : 'hidden md:flex'} w-full h-full`}>
+                <DndContext
+                    sensors={sensors}
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
                 >
-                    {/* Toggle Switch for Chantier Filter */}
-                    {selectedChantier && (
-                        <div className="mt-4 px-4">
-                            <label className="flex items-center cursor-pointer gap-2">
-                                <div className="relative">
-                                    <input
-                                        type="checkbox"
-                                        className="sr-only"
-                                        checked={showAllInterventions}
-                                        onChange={(e) => setShowAllInterventions(e.target.checked)}
-                                    />
-                                    <div className={`block w-10 h-6 rounded-full transition-colors ${showAllInterventions ? 'bg-blue-600' : 'bg-slate-300'}`}></div>
-                                    <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showAllInterventions ? 'transform translate-x-4' : ''}`}></div>
-                                </div>
-                                <span className="text-xs font-medium text-slate-600">
-                                    {showAllInterventions ? 'Tout voir' : 'Chantier en cours'}
-                                </span>
-                            </label>
-                        </div>
-                    )}
-                </PlanningSidebar>
-
-                <div className="flex-1 flex flex-col min-w-0 bg-white">
-                    <CalendarGrid
-                        currentDate={currentDate}
-                        onDateChange={setCurrentDate}
-                        interventions={filteredInterventions}
-                        collaborateurs={collaborateurs}
-                        onInterventionClick={setSelectedIntervention}
-                        onTodayClick={() => setCurrentDate(new Date())}
-                        isExpanded={isExpanded}
-                        onToggleExpand={() => setIsExpanded(!isExpanded)}
-                        onRefresh={fetchData}
+                    <PlanningSidebar
                         chantiers={chantiers}
-                    />
-                </div>
+                        collaborateurs={collaborateurs}
+                        selectedChantier={selectedChantier}
+                        onSelectChantier={setSelectedChantier}
+                        interventions={interventions}
+                        filteredCollaboratorIds={filteredCollaboratorIds}
+                        onToggleFilter={toggleCollaboratorFilter}
+                    >
+                        {/* Toggle Switch for Chantier Filter */}
+                        {selectedChantier && (
+                            <div className="mt-4 px-4">
+                                <label className="flex items-center cursor-pointer gap-2">
+                                    <div className="relative">
+                                        <input
+                                            type="checkbox"
+                                            className="sr-only"
+                                            checked={showAllInterventions}
+                                            onChange={(e) => setShowAllInterventions(e.target.checked)}
+                                        />
+                                        <div className={`block w-10 h-6 rounded-full transition-colors ${showAllInterventions ? 'bg-blue-600' : 'bg-slate-300'}`}></div>
+                                        <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showAllInterventions ? 'transform translate-x-4' : ''}`}></div>
+                                    </div>
+                                    <span className="text-xs font-medium text-slate-600">
+                                        {showAllInterventions ? 'Tout voir' : 'Chantier en cours'}
+                                    </span>
+                                </label>
+                            </div>
+                        )}
 
-                <DragOverlay>
-                    {activeId ? (
-                        <div className="opacity-80 pointer-events-none transform scale-105">
-                            {activeCollaborateur ? (
-                                <div className="bg-white p-3 rounded-xl shadow-2xl border-2 border-blue-500 flex items-center gap-3 w-64">
-                                    <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden border border-slate-200">
-                                        {activeCollaborateur.photo_url ? (
-                                            <img src={activeCollaborateur.photo_url} alt={activeCollaborateur.prenom} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center font-bold text-slate-400">
-                                                {activeCollaborateur.prenom[0]}
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <div className="font-bold text-slate-800">{activeCollaborateur.prenom} {activeCollaborateur.nom}</div>
-                                        <div className="text-xs text-slate-500">{activeCollaborateur.poste}</div>
-                                    </div>
-                                </div>
-                            ) : null}
+                        {/* Mobile View Toggle */}
+                        <div className="mt-auto p-4 border-t border-slate-200">
+                            <button
+                                onClick={() => setForceMobile(true)}
+                                className="w-full py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                            >
+                                <span>📱</span> Voir version Mobile
+                            </button>
                         </div>
-                    ) : null}
-                </DragOverlay>
-            </DndContext>
+                    </PlanningSidebar>
+
+                    <div className="flex-1 flex flex-col min-w-0 bg-white">
+                        <CalendarGrid
+                            currentDate={currentDate}
+                            onDateChange={setCurrentDate}
+                            interventions={filteredInterventions}
+                            collaborateurs={collaborateurs}
+                            onInterventionClick={setSelectedIntervention}
+                            onTodayClick={() => setCurrentDate(new Date())}
+                            isExpanded={isExpanded}
+                            onToggleExpand={() => setIsExpanded(!isExpanded)}
+                            onRefresh={fetchData}
+                            chantiers={chantiers}
+                        />
+                    </div>
+
+                    <DragOverlay>
+                        {activeId ? (
+                            <div className="opacity-80 pointer-events-none transform scale-105">
+                                {activeCollaborateur ? (
+                                    <div className="bg-white p-3 rounded-xl shadow-2xl border-2 border-blue-500 flex items-center gap-3 w-64">
+                                        <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden border border-slate-200">
+                                            {activeCollaborateur.photo_url ? (
+                                                <img src={activeCollaborateur.photo_url} alt={activeCollaborateur.prenom} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center font-bold text-slate-400">
+                                                    {activeCollaborateur.prenom[0]}
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <div className="font-bold text-slate-800">{activeCollaborateur.prenom} {activeCollaborateur.nom}</div>
+                                            <div className="text-xs text-slate-500">{activeCollaborateur.poste}</div>
+                                        </div>
+                                    </div>
+                                ) : null}
+                            </div>
+                        ) : null}
+                    </DragOverlay>
+                </DndContext>
+            </div>
 
             {/* Mobile View */}
-            <div className="block md:hidden w-full h-full">
+            <div className={`${forceMobile ? 'flex flex-col' : 'block md:hidden'} w-full h-full relative`}>
+                {forceMobile && (
+                    <div className="bg-slate-800 text-white px-4 py-2 flex items-center justify-between text-sm">
+                        <span>Mode Mobile (Simulé)</span>
+                        <button
+                            onClick={() => setForceMobile(false)}
+                            className="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded text-xs font-medium"
+                        >
+                            Retour Desktop
+                        </button>
+                    </div>
+                )}
                 <MobilePlanningView
                     currentDate={currentDate}
                     onDateChange={setCurrentDate}

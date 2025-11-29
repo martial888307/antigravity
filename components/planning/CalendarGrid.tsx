@@ -145,7 +145,7 @@ export default function CalendarGrid({
 
                 <div className="flex items-center gap-2">
                     <VoiceRecorder
-                        onSuccess={onRefresh}
+                        onRefresh={onRefresh}
                         chantiers={chantiers}
                         collaborateurs={collaborateurs}
                     />

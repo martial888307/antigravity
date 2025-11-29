@@ -7,6 +7,7 @@ import { Chantier, Collaborateur, Intervention } from '@/types';
 import PlanningSidebar from './PlanningSidebar';
 import CalendarGrid from './CalendarGrid';
 import InterventionModal from './InterventionModal';
+import MobilePlanningView from './MobilePlanningView';
 
 function generateUUID() {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -269,45 +270,65 @@ export default function PlanningContainer() {
                     )}
                 </PlanningSidebar>
 
-                <CalendarGrid
-                    currentDate={currentDate}
-                    interventions={filteredInterventions}
-                    collaborateurs={collaborateurs}
-                    onInterventionClick={setSelectedIntervention}
-                    onDateChange={setCurrentDate}
-                    onTodayClick={() => setCurrentDate(new Date())}
-                    isExpanded={isExpanded}
-                    onToggleExpand={() => setIsExpanded(!isExpanded)}
-                    onRefresh={fetchData}
-                    chantiers={chantiers}
-                />
+                <div className="flex-1 flex flex-col min-w-0 bg-white">
+                    <CalendarGrid
+                        currentDate={currentDate}
+                        onDateChange={setCurrentDate}
+                        interventions={filteredInterventions}
+                        collaborateurs={collaborateurs}
+                        onInterventionClick={setSelectedIntervention}
+                        onTodayClick={() => setCurrentDate(new Date())}
+                        isExpanded={isExpanded}
+                        onToggleExpand={() => setIsExpanded(!isExpanded)}
+                        onRefresh={fetchData}
+                        chantiers={chantiers}
+                    />
+                </div>
 
                 <DragOverlay>
-                    {activeCollaborateur ? (
-                        <div className="flex items-center gap-3 p-2 rounded-lg border bg-white shadow-xl opacity-90 w-64 cursor-grabbing">
-                            <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 border-2 border-white shrink-0">
-                                {activeCollaborateur.photo_url ? (
-                                    <img src={activeCollaborateur.photo_url} alt={activeCollaborateur.prenom} className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center font-bold text-sm">
-                                        {activeCollaborateur.prenom[0]}{activeCollaborateur.nom[0]}
+                    {activeId ? (
+                        <div className="opacity-80 pointer-events-none transform scale-105">
+                            {activeCollaborateur ? (
+                                <div className="bg-white p-3 rounded-xl shadow-2xl border-2 border-blue-500 flex items-center gap-3 w-64">
+                                    <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden border border-slate-200">
+                                        {activeCollaborateur.photo_url ? (
+                                            <img src={activeCollaborateur.photo_url} alt={activeCollaborateur.prenom} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center font-bold text-slate-400">
+                                                {activeCollaborateur.prenom[0]}
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-                            </div>
-                            <div>
-                                <div className="font-semibold text-sm">{activeCollaborateur.prenom} {activeCollaborateur.nom}</div>
-                            </div>
+                                    <div>
+                                        <div className="font-bold text-slate-800">{activeCollaborateur.prenom} {activeCollaborateur.nom}</div>
+                                        <div className="text-xs text-slate-500">{activeCollaborateur.poste}</div>
+                                    </div>
+                                </div>
+                            ) : null}
                         </div>
                     ) : null}
                 </DragOverlay>
-
-                <InterventionModal
-                    isOpen={!!selectedIntervention}
-                    onClose={() => setSelectedIntervention(null)}
-                    onDelete={handleDeleteIntervention}
-                    intervention={selectedIntervention}
-                />
             </DndContext>
+
+            {/* Mobile View */}
+            <div className="block md:hidden w-full h-full">
+                <MobilePlanningView
+                    currentDate={currentDate}
+                    onDateChange={setCurrentDate}
+                    chantiers={chantiers}
+                    collaborateurs={collaborateurs}
+                    interventions={interventions}
+                    onRefresh={fetchData}
+                    onDeleteIntervention={handleDeleteIntervention}
+                />
+            </div>
+
+            <InterventionModal
+                isOpen={!!selectedIntervention}
+                onClose={() => setSelectedIntervention(null)}
+                onDelete={handleDeleteIntervention}
+                intervention={selectedIntervention}
+            />
         </div>
     );
 }

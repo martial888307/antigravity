@@ -7,12 +7,12 @@ import ReactMarkdown from 'react-markdown';
 import { X } from 'lucide-react';
 
 interface VoiceRecorderProps {
-    onSuccess?: () => void;
+    onRefresh?: () => void;
     chantiers?: any[];
     collaborateurs?: any[];
 }
 
-export default function VoiceRecorder({ onSuccess, chantiers = [], collaborateurs = [] }: VoiceRecorderProps) {
+export default function VoiceRecorder({ onRefresh, chantiers = [], collaborateurs = [] }: VoiceRecorderProps) {
     const [isRecording, setIsRecording] = useState(false);
     const [isSending, setIsSending] = useState(false);
     const [sessionId, setSessionId] = useState<string>('');
@@ -167,8 +167,9 @@ export default function VoiceRecorder({ onSuccess, chantiers = [], collaborateur
             // For now, we assume 200 OK means success and no need to interrupt user
 
             // Refresh planning if response seems correct
-            if (response.ok && onSuccess) {
-                onSuccess();
+            // Refresh data
+            if (onRefresh) {
+                onRefresh();
             }
         } catch (error: any) {
             console.error('❌ Erreur lors de l\'envoi:', error);

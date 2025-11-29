@@ -3,7 +3,7 @@
 import { useDroppable, useDraggable } from '@dnd-kit/core';
 import { Intervention, Collaborateur } from '@/types';
 
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Maximize2, Minimize2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Maximize2, Minimize2, RotateCcw } from 'lucide-react';
 import VoiceRecorder from '../VoiceRecorder';
 
 interface CalendarGridProps {
@@ -144,6 +144,13 @@ export default function CalendarGrid({
                 </div>
 
                 <div className="flex items-center gap-2">
+                    <button
+                        onClick={onRefresh}
+                        className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Rafraîchir les données"
+                    >
+                        <RotateCcw size={20} />
+                    </button>
                     <VoiceRecorder
                         onRefresh={onRefresh}
                         chantiers={chantiers}

@@ -1,120 +1,135 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
-import { Client } from '@/types';
-import ClientList from '@/components/ClientList';
-import ClientModal from '@/components/ClientModal';
-import Layout from '@/components/Layout';
-import { Plus, Users } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
+import { ArrowRight, Calendar, Mic, Smartphone, Play, X } from 'lucide-react';
 
-export default function Home() {
-  const [clients, setClients] = useState<Client[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingClient, setEditingClient] = useState<Client | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const fetchClients = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('test-client')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching clients:', error);
-    } else {
-      setClients(data || []);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchClients();
-  }, []);
-
-  const handleCreate = () => {
-    setEditingClient(null);
-    setIsModalOpen(true);
-  };
-
-  const handleEdit = (client: Client) => {
-    setEditingClient(client);
-    setIsModalOpen(true);
-  };
-
-  const handleDelete = async (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce client ?')) return;
-
-    const { error } = await supabase.from('test-client').delete().eq('id', id);
-
-    if (error) {
-      console.error('Error deleting client:', error);
-      alert('Erreur lors de la suppression');
-    } else {
-      fetchClients();
-    }
-  };
-
-  const handleSave = async (clientData: Omit<Client, 'id' | 'created_at'>) => {
-    if (editingClient) {
-      // Update
-      const { error } = await supabase
-        .from('test-client')
-        .update(clientData)
-        .eq('id', editingClient.id);
-
-      if (error) {
-        console.error('Error updating client:', error);
-        throw error;
-      }
-    } else {
-      // Create
-      const { error } = await supabase.from('test-client').insert([clientData]);
-
-      if (error) {
-        console.error('Error creating client:', error);
-        throw error;
-      }
-    }
-    fetchClients();
-  };
+export default function LandingPage() {
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   return (
-    <Layout>
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold text-slate-900">Clients</h1>
-          <button
-            onClick={handleCreate}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg shadow-md shadow-blue-200 transition-all font-medium active:scale-95"
-          >
-            <Plus size={20} />
-            <span>Nouveau Client</span>
-          </button>
-        </div>
+    <div className="min-h-screen bg-white font-sans">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden bg-slate-900 text-white">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1504384308090-c54be3855833?q=80&w=2800&auto=format&fit=crop')] bg-cover bg-center opacity-20"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="text-left">
+              <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">
+                Planifiez vos chantiers <br />
+                <span className="text-blue-400">simplement</span>
+              </h1>
+              <p className="text-lg text-slate-300 mb-8 max-w-xl">
+                La solution tout-en-un pour gérer vos équipes et vos interventions.
+                Pensé pour le terrain, optimisé pour le bureau.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  href="/planning"
+                  className="inline-flex items-center justify-center px-6 py-3 text-base font-bold rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-500/30"
+                >
+                  Accéder au Planning
+                  <ArrowRight className="ml-2" size={18} />
+                </Link>
+                <button
+                  onClick={() => setIsVideoOpen(true)}
+                  className="inline-flex items-center justify-center px-6 py-3 text-base font-bold rounded-full text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all border border-white/20"
+                >
+                  <Play className="mr-2 fill-current" size={18} />
+                  Voir la démo
+                </button>
+              </div>
+            </div>
 
-        {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+            {/* Video Thumbnail */}
+            <div className="relative group cursor-pointer" onClick={() => setIsVideoOpen(true)}>
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-slate-800">
+                <img
+                  src="https://img.youtube.com/vi/Eg8SmWXO5Tw/maxresdefault.jpg"
+                  alt="Demo Video Thumbnail"
+                  className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-16 h-16 bg-blue-600/90 rounded-full flex items-center justify-center backdrop-blur-sm shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <Play className="w-6 h-6 text-white fill-current ml-1" />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        ) : (
-          <ClientList
-            clients={clients}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        )}
-
-        {/* Modal */}
-        <ClientModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleSave}
-          initialData={editingClient}
-        />
+        </div>
       </div>
-    </Layout>
+
+      {/* Features Section */}
+      <div className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="p-6 rounded-2xl bg-slate-50 hover:bg-blue-50 transition-colors border border-slate-100 hover:border-blue-100">
+              <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4">
+                <Calendar size={24} />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">Planning Intuitif</h3>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Visualisez et modifiez les emplois du temps de vos équipes en un clin d'œil.
+              </p>
+            </div>
+            <div className="p-6 rounded-2xl bg-slate-50 hover:bg-purple-50 transition-colors border border-slate-100 hover:border-purple-100">
+              <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-4">
+                <Mic size={24} />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">Commande Vocale</h3>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Ajoutez des interventions simplement en parlant. L'IA s'occupe du reste.
+              </p>
+            </div>
+            <div className="p-6 rounded-2xl bg-slate-50 hover:bg-green-50 transition-colors border border-slate-100 hover:border-green-100">
+              <div className="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-4">
+                <Smartphone size={24} />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">100% Mobile</h3>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Accédez à toutes les fonctionnalités depuis votre smartphone, où que vous soyez.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-slate-900 text-slate-400 py-8 border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm">&copy; 2025 EurekIA. Tous droits réservés.</p>
+          <div className="flex gap-6 text-sm">
+            <a href="#" className="hover:text-white transition-colors">Mentions légales</a>
+            <a href="#" className="hover:text-white transition-colors">Contact</a>
+          </div>
+        </div>
+      </footer>
+
+      {/* Video Modal */}
+      {isVideoOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+            <button
+              onClick={() => setIsVideoOpen(false)}
+              className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full backdrop-blur-md transition-colors"
+            >
+              <X size={24} />
+            </button>
+            <iframe
+              width="100%"
+              height="100%"
+              src="https://www.youtube.com/embed/Eg8SmWXO5Tw?autoplay=1"
+              title="EurekIA Demo"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0"
+            ></iframe>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

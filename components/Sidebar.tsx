@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Users, HardHat, ChevronLeft, ChevronRight, Menu, Briefcase, Calendar } from 'lucide-react';
+import { Users, HardHat, ChevronLeft, ChevronRight, Menu, Briefcase, Calendar, Home } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export default function Sidebar() {
@@ -12,9 +12,10 @@ export default function Sidebar() {
     const pathname = usePathname();
 
     const navItems = [
+        { name: 'Accueil', href: '/', icon: Home },
         { name: 'Planning', href: '/planning', icon: Calendar },
         { name: 'Collaborateurs', href: '/collaborateurs', icon: Briefcase },
-        { name: 'Clients', href: '/', icon: Users },
+        { name: 'Clients', href: '/clients', icon: Users },
         { name: 'Chantiers', href: '/chantiers', icon: HardHat },
     ];
 

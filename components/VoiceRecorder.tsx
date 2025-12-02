@@ -112,7 +112,8 @@ export default function VoiceRecorder({ onRefresh, chantiers = [], collaborateur
             messageCount: currentCount + 1,
             size: blob.size,
             type: blob.type,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            entreprise_id: entreprise?.id
         });
 
         try {

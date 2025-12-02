@@ -81,17 +81,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setData(session);
-            if (_event === 'SIGNED_OUT') {
-                router.push('/login');
-            }
+            // Removed automatic redirect here to let signOut handle it explicitly
         });
 
         return () => subscription.unsubscribe();
     }, [router]);
 
     const signOut = async () => {
-        await supabase.auth.signOut();
-        router.push('/login');
+        try {
+            // Call server-side API to properly clear cookies
+            await fetch('/api/auth/signout', { method: 'POST' });
+        } catch (error) {
+            console.error('Error signing out:', error);
+        }
+
+        // Clear local state
+        setUser(null);
+        setSession(null);
+        setProfile(null);
+        setEntreprise(null);
+
+        // Redirect to home page
+        window.location.href = '/';
     };
 
     return (

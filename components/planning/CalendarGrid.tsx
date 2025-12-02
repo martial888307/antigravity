@@ -121,7 +121,7 @@ export default function CalendarGrid({
     };
 
     return (
-        <div className={`flex-1 flex flex-col ${isExpanded ? 'h-auto' : 'h-full'} overflow-hidden bg-slate-50`}>
+        <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50">
             {/* Header */}
             <div className="p-4 border-b border-slate-200 bg-white flex justify-between items-center shrink-0">
                 <div className="flex items-center gap-4">
@@ -176,7 +176,7 @@ export default function CalendarGrid({
             </div>
 
             {/* Calendar Body */}
-            <div className={`flex-1 p-4 ${isExpanded ? '' : 'overflow-y-auto'}`}>
+            <div className="flex-1 p-4 overflow-y-auto">
                 <div className={`grid grid-cols-7 gap-2 ${isExpanded ? 'auto-rows-auto' : 'auto-rows-fr h-full'}`}>
                     {days.map((day) => (
                         <DayCell

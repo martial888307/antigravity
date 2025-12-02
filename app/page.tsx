@@ -13,66 +13,70 @@ export default function LandingPage() {
       <div className="relative overflow-hidden bg-slate-900 text-white">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1504384308090-c54be3855833?q=80&w=2800&auto=format&fit=crop')] bg-cover bg-center opacity-20"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="text-left flex flex-col items-start">
-              <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">
-                Planifiez vos chantiers <br />
-                <span className="text-blue-400">simplement</span>
-              </h1>
-              <p className="text-lg text-slate-300 mb-8 max-w-xl">
-                La solution tout-en-un pour gérer vos équipes et vos interventions.
-                Pensé pour le terrain, optimisé pour le bureau.
-              </p>
+          {/* Header Section (Full Width) */}
+          <div className="text-center max-w-4xl mx-auto mb-16">
+            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
+              Planifiez vos chantiers <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+                simplement
+              </span>
+            </h1>
+            <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
+              La solution tout-en-un pour gérer vos équipes et vos interventions.
+              Pensé pour le terrain, optimisé pour le bureau.
+            </p>
+          </div>
 
-              <div className="flex flex-col items-start gap-6 w-full">
-                <Link
-                  href="/signup"
-                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-500/30 w-full sm:w-auto"
-                >
-                  Essayer gratuitement
-                  <ArrowRight className="ml-2" size={20} />
-                </Link>
+          {/* Two Columns Content */}
+          <div className="grid md:grid-cols-2 gap-8 items-start max-w-6xl mx-auto">
 
-                <div className="flex flex-col gap-3">
-                  {/* Video Thumbnail */}
-                  <div
-                    className="relative w-72 aspect-video rounded-xl overflow-hidden shadow-lg border border-white/10 bg-slate-800 cursor-pointer group"
-                    onClick={() => setIsVideoOpen(true)}
-                  >
-                    <img
-                      src="https://img.youtube.com/vi/Eg8SmWXO5Tw/maxresdefault.jpg"
-                      alt="Demo Video Thumbnail"
-                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-12 h-12 bg-blue-600/90 rounded-full flex items-center justify-center backdrop-blur-sm shadow-lg group-hover:scale-110 transition-transform duration-300">
-                        <Play className="w-5 h-5 text-white fill-current ml-1" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => setIsVideoOpen(true)}
-                    className="flex items-center text-slate-300 hover:text-white transition-colors font-medium text-sm ml-1 group"
-                  >
-                    <Play size={16} className="mr-2 group-hover:fill-current" />
-                    Voir la démo
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Hero Image */}
-            <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-              <div className="relative rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-slate-800">
+            {/* Left Column: Image + CTA */}
+            <div className="flex flex-col gap-6">
+              <div className="relative group rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-slate-800 aspect-video">
+                <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-lg opacity-20 group-hover:opacity-40 transition duration-500"></div>
                 <img
-                  src="/hero-illustration.png"
-                  alt="Illustration Planning Artisan"
-                  className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700"
+                  src="/hero-image-v2.png"
+                  alt="Artisan utilisant l'application"
+                  className="relative w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
+
+              <Link
+                href="/signup"
+                className="w-full inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-xl text-white bg-blue-600 hover:bg-blue-500 transition-all shadow-lg hover:shadow-blue-500/40 transform hover:-translate-y-0.5"
+              >
+                Essayer gratuitement
+                <ArrowRight className="ml-2" size={20} />
+              </Link>
             </div>
+
+            {/* Right Column: Video + CTA */}
+            <div className="flex flex-col gap-6">
+              <div
+                className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-slate-800 cursor-pointer group ring-1 ring-white/5 hover:ring-blue-500/50 transition-all"
+                onClick={() => setIsVideoOpen(true)}
+              >
+                <img
+                  src="https://img.youtube.com/vi/Eg8SmWXO5Tw/maxresdefault.jpg"
+                  alt="Demo Video Thumbnail"
+                  className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-16 h-16 bg-blue-600/90 rounded-full flex items-center justify-center backdrop-blur-sm shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <Play className="w-6 h-6 text-white fill-current ml-1" />
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsVideoOpen(true)}
+                className="w-full inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-xl text-white bg-slate-700 hover:bg-slate-600 transition-all shadow-lg border border-slate-600 hover:border-slate-500 transform hover:-translate-y-0.5"
+              >
+                <Play className="mr-2 fill-current" size={20} />
+                Voir la démo
+              </button>
+            </div>
+
           </div>
         </div>
       </div>

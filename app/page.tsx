@@ -25,11 +25,11 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
-                  href="/planning"
-                  className="inline-flex items-center justify-center px-6 py-3 text-base font-bold rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-500/30"
+                  href="/signup"
+                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-500/30"
                 >
-                  Accéder au Planning
-                  <ArrowRight className="ml-2" size={18} />
+                  Essayer gratuitement
+                  <ArrowRight className="ml-2" size={20} />
                 </Link>
                 <button
                   onClick={() => setIsVideoOpen(true)}

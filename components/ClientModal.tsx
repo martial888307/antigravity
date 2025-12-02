@@ -7,7 +7,7 @@ import { X } from 'lucide-react';
 interface ClientModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (client: Omit<Client, 'id' | 'created_at'>) => Promise<void>;
+    onSave: (client: Omit<Client, 'id' | 'created_at' | 'entreprise_id'>) => Promise<void>;
     initialData?: Client | null;
 }
 

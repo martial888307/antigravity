@@ -7,7 +7,7 @@ import { X, Upload } from 'lucide-react';
 interface CollaborateurModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (collaborateur: Omit<Collaborateur, 'id' | 'created_at'>) => Promise<void>;
+    onSave: (collaborateur: Omit<Collaborateur, 'id' | 'created_at' | 'entreprise_id'>) => Promise<void>;
     initialData?: Collaborateur | null;
 }
 

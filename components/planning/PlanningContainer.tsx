@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/components/AuthProvider';
 import { DndContext, DragEndEvent, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor } from '@dnd-kit/core';
 import { supabase } from '@/lib/supabaseClient';
 import { Chantier, Collaborateur, Intervention } from '@/types';
@@ -39,6 +40,7 @@ export default function PlanningContainer() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [showAllInterventions, setShowAllInterventions] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
+    const { entreprise } = useAuth();
 
     const sensors = useSensors(
         useSensor(MouseSensor, { activationConstraint: { distance: 10 } }),
@@ -131,6 +133,7 @@ export default function PlanningContainer() {
                 date_fin: toFakeUTCISOString(dateFin),
                 chantier: selectedChantier,
                 collaborateur: collaborateur,
+                entreprise_id: entreprise?.id || '',
             };
 
             setInterventions([...interventions, newIntervention]);
@@ -142,6 +145,7 @@ export default function PlanningContainer() {
                 collaborateur_id: collaborateur.id,
                 date_debut: toFakeUTCISOString(dateDebut),
                 date_fin: toFakeUTCISOString(dateFin),
+                entreprise_id: entreprise?.id,
             }]).select().single();
 
             if (error) {

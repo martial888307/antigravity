@@ -1,15 +1,17 @@
-'use client';
-
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Users, HardHat, ChevronLeft, ChevronRight, Menu, Briefcase, Calendar, Home } from 'lucide-react';
+import { Users, HardHat, ChevronLeft, ChevronRight, Menu, Briefcase, Calendar, Home, LogOut, Settings } from 'lucide-react';
 import { clsx } from 'clsx';
+import { useAuth } from '@/components/AuthProvider';
+import EnterpriseSettingsModal from '@/components/EnterpriseSettingsModal';
 
 export default function Sidebar() {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const pathname = usePathname();
+    const { signOut, user, profile } = useAuth();
 
     const navItems = [
         { name: 'Accueil', href: '/', icon: Home },
@@ -85,18 +87,45 @@ export default function Sidebar() {
                     })}
                 </nav>
 
-                {/* Footer (User Profile placeholder) */}
-                <div className="p-4 border-t border-slate-200">
+                {/* Footer (User Profile & Actions) */}
+                <div className="p-4 border-t border-slate-200 space-y-4">
+                    {/* User Info */}
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xs shrink-0">
-                            MB
+                            {user?.email?.substring(0, 2).toUpperCase() || 'MB'}
                         </div>
                         {!isCollapsed && (
                             <div className="overflow-hidden">
-                                <p className="text-sm font-medium text-slate-900 truncate">Martial</p>
-                                <p className="text-xs text-slate-500 truncate">Admin</p>
+                                <p className="text-sm font-medium text-slate-900 truncate">{user?.email || 'Utilisateur'}</p>
+                                <p className="text-xs text-slate-500 truncate">{profile?.role === 'admin' ? 'Administrateur' : 'Utilisateur'}</p>
                             </div>
                         )}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className={clsx("flex gap-2", isCollapsed ? "flex-col" : "flex-row")}>
+                        <button
+                            onClick={() => setIsSettingsOpen(true)}
+                            className={clsx(
+                                "flex items-center justify-center gap-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors",
+                                isCollapsed ? "p-2" : "flex-1 py-2 px-3 text-sm"
+                            )}
+                            title="Mon Compte"
+                        >
+                            <Settings size={18} />
+                            {!isCollapsed && <span>Compte</span>}
+                        </button>
+                        <button
+                            onClick={() => signOut()}
+                            className={clsx(
+                                "flex items-center justify-center gap-2 rounded-lg border border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-100 text-slate-600 transition-colors",
+                                isCollapsed ? "p-2" : "flex-1 py-2 px-3 text-sm"
+                            )}
+                            title="Déconnexion"
+                        >
+                            <LogOut size={18} />
+                            {!isCollapsed && <span>Sortir</span>}
+                        </button>
                     </div>
                 </div>
             </aside>
@@ -108,6 +137,12 @@ export default function Sidebar() {
                     onClick={() => setIsMobileOpen(false)}
                 />
             )}
+
+            {/* Settings Modal */}
+            <EnterpriseSettingsModal
+                isOpen={isSettingsOpen}
+                onClose={() => setIsSettingsOpen(false)}
+            />
         </>
     );
 }

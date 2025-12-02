@@ -216,8 +216,8 @@ export default function MobilePlanningView({
                                             key={collab.id}
                                             onClick={() => toggleCollaborator(collab.id)}
                                             className={`p-3 rounded-lg border text-left transition-all ${isSelected
-                                                    ? 'bg-blue-50 border-blue-200 ring-1 ring-blue-200'
-                                                    : 'bg-white border-slate-200 hover:bg-slate-50'
+                                                ? 'bg-blue-50 border-blue-200 ring-1 ring-blue-200'
+                                                : 'bg-white border-slate-200 hover:bg-slate-50'
                                                 }`}
                                         >
                                             <div className="font-medium text-sm text-slate-900">

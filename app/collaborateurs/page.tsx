@@ -1,18 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabaseClient';
 import { Collaborateur } from '@/types';
 import Layout from '@/components/Layout';
 import CollaborateurList from '@/components/CollaborateurList';
 import CollaborateurModal from '@/components/CollaborateurModal';
-import { Plus } from 'lucide-react';
+import { generateDemoCollaborateurs } from '@/lib/demoData';
+import { Plus, Wand2 } from 'lucide-react';
 
 export default function CollaborateursPage() {
     const [collaborateurs, setCollaborateurs] = useState<Collaborateur[]>([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCollaborateur, setEditingCollaborateur] = useState<Collaborateur | null>(null);
+    const [generatingDemo, setGeneratingDemo] = useState(false);
+    const { entreprise } = useAuth();
 
     const fetchCollaborateurs = async () => {
         setLoading(true);
@@ -57,12 +61,34 @@ export default function CollaborateursPage() {
         }
     };
 
-    const handleSave = async (collabData: Omit<Collaborateur, 'id' | 'created_at'>) => {
+    const handleGenerateDemo = async () => {
+        if (!entreprise) return;
+        setGeneratingDemo(true);
+        const result = await generateDemoCollaborateurs(supabase, entreprise.id);
+        if (result.success) {
+            fetchCollaborateurs();
+        } else {
+            alert("Erreur lors de la génération des données de démo.");
+        }
+        setGeneratingDemo(false);
+    };
+
+    const handleSave = async (collabData: Omit<Collaborateur, 'id' | 'created_at' | 'entreprise_id'>) => {
+        if (!entreprise) {
+            console.error('No enterprise found');
+            return;
+        }
+
+        const dataToSave = {
+            ...collabData,
+            entreprise_id: entreprise.id,
+        };
+
         if (editingCollaborateur) {
             // Update
             const { error } = await supabase
                 .from('test-collaborateur')
-                .update(collabData)
+                .update(dataToSave)
                 .eq('id', editingCollaborateur.id);
 
             if (error) {
@@ -71,7 +97,7 @@ export default function CollaborateursPage() {
             }
         } else {
             // Create
-            const { error } = await supabase.from('test-collaborateur').insert([collabData]);
+            const { error } = await supabase.from('test-collaborateur').insert([dataToSave]);
 
             if (error) {
                 console.error('Error creating collaborator:', error);
@@ -86,13 +112,23 @@ export default function CollaborateursPage() {
             <div className="max-w-6xl mx-auto">
                 <div className="flex items-center justify-between mb-8">
                     <h1 className="text-2xl font-bold text-slate-900">Collaborateurs</h1>
-                    <button
-                        onClick={handleCreateClick}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg shadow-md shadow-blue-200 transition-all font-medium active:scale-95"
-                    >
-                        <Plus size={20} />
-                        <span>Nouveau Collaborateur</span>
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={handleGenerateDemo}
+                            disabled={generatingDemo}
+                            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-lg shadow-sm transition-all font-medium active:scale-95 disabled:opacity-50"
+                        >
+                            <Wand2 size={20} className={generatingDemo ? "animate-spin" : ""} />
+                            <span>{generatingDemo ? 'Génération...' : 'Démo'}</span>
+                        </button>
+                        <button
+                            onClick={handleCreateClick}
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg shadow-md shadow-blue-200 transition-all font-medium active:scale-95"
+                        >
+                            <Plus size={20} />
+                            <span>Nouveau Collaborateur</span>
+                        </button>
+                    </div>
                 </div>
 
                 {loading ? (

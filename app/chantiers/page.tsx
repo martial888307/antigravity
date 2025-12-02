@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabaseClient';
 import { Chantier, Client } from '@/types';
 import Layout from '@/components/Layout';
@@ -73,12 +74,24 @@ export default function ChantiersPage() {
         }
     };
 
-    const handleSave = async (chantierData: Omit<Chantier, 'id' | 'created_at' | 'client'>) => {
+    const { entreprise } = useAuth();
+
+    const handleSave = async (chantierData: Omit<Chantier, 'id' | 'created_at' | 'client' | 'entreprise_id'>) => {
+        if (!entreprise) {
+            console.error('No enterprise found');
+            return;
+        }
+
+        const dataToSave = {
+            ...chantierData,
+            entreprise_id: entreprise.id,
+        };
+
         if (editingChantier) {
             // Update
             const { error } = await supabase
                 .from('test-chantier')
-                .update(chantierData)
+                .update(dataToSave)
                 .eq('id', editingChantier.id);
 
             if (error) {
@@ -87,7 +100,7 @@ export default function ChantiersPage() {
             }
         } else {
             // Create
-            const { error } = await supabase.from('test-chantier').insert([chantierData]);
+            const { error } = await supabase.from('test-chantier').insert([dataToSave]);
 
             if (error) {
                 console.error('Error creating chantier:', error);

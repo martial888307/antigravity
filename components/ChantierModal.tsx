@@ -7,7 +7,7 @@ import { X } from 'lucide-react';
 interface ChantierModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (chantier: Omit<Chantier, 'id' | 'created_at' | 'client'>) => Promise<void>;
+    onSave: (chantier: Omit<Chantier, 'id' | 'created_at' | 'client' | 'entreprise_id'>) => Promise<void>;
     initialData?: Chantier | null;
     selectedClient?: Client | null;
 }

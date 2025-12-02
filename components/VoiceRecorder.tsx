@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useAuth } from '@/components/AuthProvider';
 import { Mic, Square, Loader2, Send } from 'lucide-react';
 
 import ReactMarkdown from 'react-markdown';
@@ -19,6 +20,7 @@ export default function VoiceRecorder({ onRefresh, chantiers = [], collaborateur
     const [responseModal, setResponseModal] = useState<{ isOpen: boolean, content: string } | null>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
+    const { entreprise } = useAuth();
 
     // Generate or retrieve session ID on mount
     useEffect(() => {
@@ -76,6 +78,9 @@ export default function VoiceRecorder({ onRefresh, chantiers = [], collaborateur
         formData.append('timestamp', new Date().toISOString());
         formData.append('sessionId', sessionId); // Add session ID
         formData.append('messageCount', (parseInt(localStorage.getItem('voiceMessageCount') || '0') + 1).toString());
+        if (entreprise?.id) {
+            formData.append('entreprise_id', entreprise.id);
+        }
 
         // Add context data
         try {

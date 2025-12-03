@@ -107,6 +107,56 @@ export default function PlanningContainer() {
 
         const type = active.data.current?.type;
 
+        // CHECK: Prevent double booking using 'creneau'
+        let targetCollaborateurId: string | undefined;
+        let sourceInterventionId: string | undefined;
+
+        if (type === 'collaborator') {
+            targetCollaborateurId = active.data.current?.collaborateur?.id;
+        } else if (type === 'intervention') {
+            targetCollaborateurId = active.data.current?.intervention?.collaborateur_id;
+            sourceInterventionId = active.data.current?.intervention?.id;
+        }
+
+        if (targetCollaborateurId) {
+            // Determine the target period (AM or PM) based on where we dropped it
+            const targetPeriod = period; // 'AM' or 'PM' from the drop zone data
+
+            const hasConflict = interventions.some(i => {
+                // Skip self
+                if (sourceInterventionId && i.id === sourceInterventionId) return false;
+
+                // Check collaborator
+                if (i.collaborateur_id !== targetCollaborateurId) return false;
+
+                // Check date (Day)
+                const iDate = new Date(i.date_debut);
+                const targetDate = new Date(date);
+                const sameDay = iDate.getFullYear() === targetDate.getFullYear() &&
+                    iDate.getMonth() === targetDate.getMonth() &&
+                    iDate.getDate() === targetDate.getDate();
+
+                if (!sameDay) return false;
+
+                // Check Period (Creneau)
+                // We use the new 'creneau' field if available, otherwise fallback to hour check (for safety)
+                if (i.creneau) {
+                    return i.creneau === targetPeriod;
+                } else {
+                    // Fallback if creneau is not yet populated in local state (should be rare with trigger)
+                    const iHour = iDate.getHours();
+                    const isAM = iHour < 12;
+                    const iPeriod = isAM ? 'AM' : 'PM';
+                    return iPeriod === targetPeriod;
+                }
+            });
+
+            if (hasConflict) {
+                alert(`Ce collaborateur est déjà planifié sur le créneau ${targetPeriod} de ce jour.`);
+                return;
+            }
+        }
+
         // CASE 1: Creating a new intervention (Drag from Sidebar)
         if (type === 'collaborator') {
             if (!selectedChantier) {
@@ -300,6 +350,7 @@ export default function PlanningContainer() {
                             onToggleExpand={() => setIsExpanded(!isExpanded)}
                             onRefresh={fetchData}
                             chantiers={chantiers}
+                            onDeleteIntervention={handleDeleteIntervention}
                         />
                     </div>
 

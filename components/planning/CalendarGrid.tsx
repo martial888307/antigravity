@@ -3,7 +3,7 @@
 import { useDroppable, useDraggable } from '@dnd-kit/core';
 import { Intervention, Collaborateur } from '@/types';
 
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Maximize2, Minimize2, RotateCcw } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Maximize2, Minimize2, RotateCcw, X } from 'lucide-react';
 import VoiceRecorder from '../VoiceRecorder';
 
 interface CalendarGridProps {
@@ -17,6 +17,7 @@ interface CalendarGridProps {
     onToggleExpand: () => void;
     onRefresh?: () => void;
     chantiers?: any[]; // Using any[] for now to match PlanningContainer state
+    onDeleteIntervention: (id: string) => void;
 }
 
 export default function CalendarGrid({
@@ -29,7 +30,8 @@ export default function CalendarGrid({
     isExpanded,
     onToggleExpand,
     onRefresh,
-    chantiers = []
+    chantiers = [],
+    onDeleteIntervention
 }: CalendarGridProps) {
     // Generate days for the grid (dynamic weeks)
     const getCalendarDays = (date: Date) => {
@@ -187,6 +189,7 @@ export default function CalendarGrid({
                             collaborateurs={collaborateurs}
                             onInterventionClick={onInterventionClick}
                             minHeight={isExpanded ? 'min-h-[12rem]' : 'min-h-0'}
+                            onDeleteIntervention={onDeleteIntervention}
                         />
                     ))}
                 </div>
@@ -195,13 +198,14 @@ export default function CalendarGrid({
     );
 }
 
-function DayCell({ date, currentMonth, interventions, collaborateurs, onInterventionClick, minHeight }: {
+function DayCell({ date, currentMonth, interventions, collaborateurs, onInterventionClick, minHeight, onDeleteIntervention }: {
     date: Date;
     currentMonth: Date;
     interventions: Intervention[];
     collaborateurs: Collaborateur[];
     onInterventionClick: (intervention: Intervention) => void;
     minHeight: string;
+    onDeleteIntervention: (id: string) => void;
 }) {
     const isWeekend = date.getDay() === 0 || date.getDay() === 6;
     const isOutsideMonth = date.getMonth() !== currentMonth.getMonth();
@@ -249,6 +253,7 @@ function DayCell({ date, currentMonth, interventions, collaborateurs, onInterven
                     onInterventionClick={onInterventionClick}
                     disabled={false}
                     isOutsideMonth={isOutsideMonth}
+                    onDeleteIntervention={onDeleteIntervention}
                 />
 
                 <div className="border-t border-slate-100 border-dashed"></div>
@@ -262,13 +267,14 @@ function DayCell({ date, currentMonth, interventions, collaborateurs, onInterven
                     onInterventionClick={onInterventionClick}
                     disabled={false}
                     isOutsideMonth={isOutsideMonth}
+                    onDeleteIntervention={onDeleteIntervention}
                 />
             </div>
         </div>
     );
 }
 
-function DroppableSlot({ date, period, interventions, collaborateurs, onInterventionClick, disabled, isOutsideMonth }: {
+function DroppableSlot({ date, period, interventions, collaborateurs, onInterventionClick, disabled, isOutsideMonth, onDeleteIntervention }: {
     date: Date;
     period: 'AM' | 'PM';
     interventions: Intervention[];
@@ -276,6 +282,7 @@ function DroppableSlot({ date, period, interventions, collaborateurs, onInterven
     onInterventionClick: (intervention: Intervention) => void;
     disabled: boolean;
     isOutsideMonth: boolean;
+    onDeleteIntervention: (id: string) => void;
 }) {
     const { setNodeRef, isOver } = useDroppable({
         id: `${date.toISOString()}-${period}`,
@@ -314,6 +321,7 @@ function DroppableSlot({ date, period, interventions, collaborateurs, onInterven
                             collaborateur={collab}
                             index={collabIndex}
                             onInterventionClick={onInterventionClick}
+                            onDeleteIntervention={onDeleteIntervention}
                         />
                     );
                 })}
@@ -326,12 +334,14 @@ function DraggableIntervention({
     intervention,
     collaborateur,
     index,
-    onInterventionClick
+    onInterventionClick,
+    onDeleteIntervention
 }: {
     intervention: Intervention;
     collaborateur: Collaborateur;
     index: number;
     onInterventionClick: (intervention: Intervention) => void;
+    onDeleteIntervention: (id: string) => void;
 }) {
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: `intervention-${intervention.id}`,
@@ -376,10 +386,23 @@ function DraggableIntervention({
                 e.stopPropagation();
                 onInterventionClick(intervention);
             }}
-            className={`text-xs p-1 rounded border ${colorClass} cursor-grab active:cursor-grabbing hover:brightness-95 transition-all`}
+            className={`text-xs p-1 rounded border ${colorClass} cursor-grab active:cursor-grabbing hover:brightness-95 transition-all group relative pr-5`}
         >
             <div className="font-semibold truncate">{collaborateur.prenom}</div>
             <div className="truncate opacity-75 text-[10px]">{intervention.chantier?.description}</div>
+
+            <button
+                onClick={(e) => {
+                    e.stopPropagation();
+                    if (confirm('Supprimer cette intervention ?')) {
+                        onDeleteIntervention(intervention.id);
+                    }
+                }}
+                className="absolute top-0.5 right-0.5 w-4 h-4 flex items-center justify-center bg-white/80 hover:bg-red-500 text-slate-400 hover:text-white rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm"
+                title="Supprimer"
+            >
+                <X size={10} strokeWidth={3} />
+            </button>
         </div>
     );
 }

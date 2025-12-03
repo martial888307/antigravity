@@ -42,6 +42,7 @@ export interface Intervention {
     date_debut: string;
     date_fin: string;
     commentaire?: string;
+    creneau?: 'AM' | 'PM';
     created_at?: string;
     // Joins
     chantier?: Chantier;

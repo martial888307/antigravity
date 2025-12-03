@@ -76,14 +76,16 @@ export default function ClientsPage() {
     };
 
     const handleSave = async (clientData: Omit<Client, 'id' | 'created_at' | 'entreprise_id'>) => {
-        if (!entreprise) {
+        const targetEntrepriseId = profile?.override_entreprise_id || entreprise?.id;
+
+        if (!targetEntrepriseId) {
             console.error('No enterprise found');
             return;
         }
 
         const dataToSave = {
             ...clientData,
-            entreprise_id: entreprise.id,
+            entreprise_id: targetEntrepriseId,
         };
 
         if (editingClient) {

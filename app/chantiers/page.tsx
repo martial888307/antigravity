@@ -74,17 +74,19 @@ export default function ChantiersPage() {
         }
     };
 
-    const { entreprise } = useAuth();
+    const { entreprise, profile } = useAuth();
 
     const handleSave = async (chantierData: Omit<Chantier, 'id' | 'created_at' | 'client' | 'entreprise_id'>) => {
-        if (!entreprise) {
+        const targetEntrepriseId = profile?.override_entreprise_id || entreprise?.id;
+
+        if (!targetEntrepriseId) {
             console.error('No enterprise found');
             return;
         }
 
         const dataToSave = {
             ...chantierData,
-            entreprise_id: entreprise.id,
+            entreprise_id: targetEntrepriseId,
         };
 
         if (editingChantier) {

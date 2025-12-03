@@ -40,7 +40,7 @@ export default function PlanningContainer() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [showAllInterventions, setShowAllInterventions] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
-    const { entreprise } = useAuth();
+    const { entreprise, profile } = useAuth();
 
     const sensors = useSensors(
         useSensor(MouseSensor, { activationConstraint: { distance: 10 } }),
@@ -175,6 +175,8 @@ export default function PlanningContainer() {
             // Optimistic UI update
             const tempId = generateUUID();
 
+            const targetEntrepriseId = profile?.override_entreprise_id || entreprise?.id;
+
             const newIntervention: Intervention = {
                 id: tempId,
                 chantier_id: selectedChantier.id,
@@ -183,7 +185,7 @@ export default function PlanningContainer() {
                 date_fin: toFakeUTCISOString(dateFin),
                 chantier: selectedChantier,
                 collaborateur: collaborateur,
-                entreprise_id: entreprise?.id || '',
+                entreprise_id: targetEntrepriseId || '',
             };
 
             setInterventions([...interventions, newIntervention]);
@@ -195,7 +197,7 @@ export default function PlanningContainer() {
                 collaborateur_id: collaborateur.id,
                 date_debut: toFakeUTCISOString(dateDebut),
                 date_fin: toFakeUTCISOString(dateFin),
-                entreprise_id: entreprise?.id,
+                entreprise_id: targetEntrepriseId,
             }]).select().single();
 
             if (error) {

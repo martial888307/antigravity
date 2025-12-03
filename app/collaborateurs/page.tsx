@@ -76,14 +76,16 @@ export default function CollaborateursPage() {
     };
 
     const handleSave = async (collabData: Omit<Collaborateur, 'id' | 'created_at' | 'entreprise_id'>) => {
-        if (!entreprise) {
+        const targetEntrepriseId = profile?.override_entreprise_id || entreprise?.id;
+
+        if (!targetEntrepriseId) {
             console.error('No enterprise found');
             return;
         }
 
         const dataToSave = {
             ...collabData,
-            entreprise_id: entreprise.id,
+            entreprise_id: targetEntrepriseId,
         };
 
         if (editingCollaborateur) {

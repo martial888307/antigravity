@@ -16,7 +16,7 @@ export default function CollaborateursPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCollaborateur, setEditingCollaborateur] = useState<Collaborateur | null>(null);
     const [generatingDemo, setGeneratingDemo] = useState(false);
-    const { entreprise } = useAuth();
+    const { entreprise, profile } = useAuth();
 
     const fetchCollaborateurs = async () => {
         setLoading(true);
@@ -62,9 +62,11 @@ export default function CollaborateursPage() {
     };
 
     const handleGenerateDemo = async () => {
-        if (!entreprise) return;
+        const targetEntrepriseId = profile?.override_entreprise_id || entreprise?.id;
+        if (!targetEntrepriseId) return;
+
         setGeneratingDemo(true);
-        const result = await generateDemoCollaborateurs(supabase, entreprise.id);
+        const result = await generateDemoCollaborateurs(supabase, targetEntrepriseId);
         if (result.success) {
             fetchCollaborateurs();
         } else {

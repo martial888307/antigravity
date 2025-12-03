@@ -16,7 +16,7 @@ export default function ClientsPage() {
     const [editingClient, setEditingClient] = useState<Client | null>(null);
     const [loading, setLoading] = useState(true);
     const [generatingDemo, setGeneratingDemo] = useState(false);
-    const { entreprise } = useAuth();
+    const { entreprise, profile } = useAuth();
 
     const fetchClients = async () => {
         setLoading(true);
@@ -62,9 +62,11 @@ export default function ClientsPage() {
     };
 
     const handleGenerateDemo = async () => {
-        if (!entreprise) return;
+        const targetEntrepriseId = profile?.override_entreprise_id || entreprise?.id;
+        if (!targetEntrepriseId) return;
+
         setGeneratingDemo(true);
-        const result = await generateDemoClients(supabase, entreprise.id);
+        const result = await generateDemoClients(supabase, targetEntrepriseId);
         if (result.success) {
             fetchClients();
         } else {

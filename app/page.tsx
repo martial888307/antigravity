@@ -160,10 +160,26 @@ export default function LandingPage() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 py-8 border-t border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm">&copy; 2025 EurekIA. Tous droits réservés.</p>
-          <div className="flex gap-6 text-sm">
+      {/* Footer */}
+      <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex flex-col items-center md:items-start gap-4">
+            <a
+              href="https://eurekia.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:opacity-90 transition-opacity"
+            >
+              <img
+                src="/eurekia-logo.png"
+                alt="Eurekia Solutions"
+                className="h-10 w-auto"
+              />
+            </a>
+            <p className="text-sm">&copy; 2025 EurekIA. Tous droits réservés.</p>
+          </div>
+
+          <div className="flex gap-8 text-sm font-medium">
             <a href="#" className="hover:text-white transition-colors">Mentions légales</a>
             <a href="#" className="hover:text-white transition-colors">Contact</a>
           </div>

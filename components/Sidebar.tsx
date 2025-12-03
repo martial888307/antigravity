@@ -5,6 +5,7 @@ import { Users, HardHat, ChevronLeft, ChevronRight, Menu, Briefcase, Calendar, H
 import { clsx } from 'clsx';
 import { useAuth } from '@/components/AuthProvider';
 import EnterpriseSettingsModal from '@/components/EnterpriseSettingsModal';
+import SuperAdminSwitcher from './SuperAdminSwitcher';
 
 export default function Sidebar() {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -86,6 +87,9 @@ export default function Sidebar() {
                         );
                     })}
                 </nav>
+
+                {/* Super Admin Switcher */}
+                {!isCollapsed && <SuperAdminSwitcher />}
 
                 {/* Footer (User Profile & Actions) */}
                 <div className="p-4 border-t border-slate-200 space-y-4">

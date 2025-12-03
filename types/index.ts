@@ -66,5 +66,7 @@ export interface Profile {
     nom?: string;
     prenom?: string;
     telephone?: string;
+    is_super_admin?: boolean;
+    override_entreprise_id?: string | null;
     created_at?: string;
 }

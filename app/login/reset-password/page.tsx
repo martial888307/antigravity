@@ -56,9 +56,10 @@ export default function ResetPasswordPage() {
             setTimeout(() => {
                 router.push('/planning');
             }, 2000);
-        } catch (err: any) {
-            console.error('Update password error:', err);
-            setError(err.message || 'Une erreur est survenue lors de la mise à jour.');
+        } catch (err) {
+            const error = err as Error;
+            console.error('Update password error:', error);
+            setError(error.message || 'Une erreur est survenue lors de la mise à jour.');
             setLoading(false);
         }
     };

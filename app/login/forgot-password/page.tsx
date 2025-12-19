@@ -25,9 +25,10 @@ export default function ForgotPasswordPage() {
             if (error) throw error;
 
             setMessage("Si un compte correspond à cet email, vous allez recevoir un lien de réinitialisation d'ici quelques instants.");
-        } catch (err: any) {
-            console.error('Reset password error:', err);
-            setError(err.message || 'Une erreur est survenue.');
+        } catch (err) {
+            const error = err as Error;
+            console.error('Reset password error:', error);
+            setError(error.message || 'Une erreur est survenue.');
         } finally {
             setLoading(false);
         }

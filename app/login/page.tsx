@@ -26,9 +26,10 @@ export default function LoginPage() {
             if (error) throw error;
 
             router.push('/planning');
-        } catch (err: any) {
-            console.error('Login error:', err);
-            setError(err.message || 'Erreur de connexion.');
+        } catch (err) {
+            const error = err as Error;
+            console.error('Login error:', error);
+            setError(error.message || 'Erreur de connexion.');
         } finally {
             setLoading(false);
         }
@@ -102,7 +103,7 @@ export default function LoginPage() {
                     </Link>
                     <div className="pt-2">
                         <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
-                            Pas encore de compte ? S'inscrire
+                            Pas encore de compte ? S&apos;inscrire
                         </Link>
                     </div>
                 </div>

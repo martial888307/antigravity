@@ -1,16 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Chantier, Collaborateur } from '@/types';
 import { useDraggable } from '@dnd-kit/core';
-import { X, Clock, Eye, EyeOff } from 'lucide-react';
+import { X, Eye, EyeOff } from 'lucide-react';
 
 interface PlanningSidebarProps {
     chantiers: Chantier[];
     collaborateurs: Collaborateur[];
     selectedChantier: Chantier | null;
     onSelectChantier: (chantier: Chantier | null) => void;
-    interventions: any[]; // We'll type this properly later or use a derived type
+    interventions: any[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     filteredCollaboratorIds: string[];
     onToggleFilter: (id: string) => void;
     children?: React.ReactNode;

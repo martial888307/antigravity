@@ -1,5 +1,7 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Client, Collaborateur } from '@/types';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Chantier } from '@/types';
 
 const FRENCH_ADDRESSES = [
     { adresse: "10 Rue de la Paix", codePostal: "75002", ville: "Paris" },
@@ -37,7 +39,8 @@ export async function generateDemoClients(supabase: SupabaseClient, entrepriseId
         const data = await response.json();
         const users = data.results;
 
-        const clientsToInsert = users.map((user: any, index: number) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const clientsToInsert = users.map((user: any) => {
             // Pick a random real address from our list to ensure Google Maps works
             const address = FRENCH_ADDRESSES[Math.floor(Math.random() * FRENCH_ADDRESSES.length)];
 
@@ -66,8 +69,10 @@ export async function generateDemoCollaborateurs(supabase: SupabaseClient, entre
         // Fetch random users from randomuser.me
         const response = await fetch(`https://randomuser.me/api/?results=${count}&nat=fr`);
         const data = await response.json();
-        const users = data.results;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const users: any[] = data.results;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const collaboratorsToInsert = users.map((user: any) => {
             return {
                 entreprise_id: entrepriseId,
